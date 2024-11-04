@@ -6,12 +6,12 @@ namespace DesafioLivrariaOnline.Controllers;
 
     public class BookController : DesafioLivrariaOnlineBaseController
     {
-        private static readonly List<Book> _Books = new List<Book>();
+        private static readonly List<Book> Books = [];
         
         [HttpPost]
         [ProducesResponseType(typeof(Book), StatusCodes.Status201Created)]
         [ProducesResponseType( StatusCodes.Status400BadRequest)]
-        public IActionResult createBook([FromBody] CreateBookRequestJSON request)
+        public IActionResult CreateBook([FromBody] CreateBookRequestJSON request)
         {
             var book = new Book()
             {
@@ -20,43 +20,43 @@ namespace DesafioLivrariaOnline.Controllers;
                 Gender = request.Gender,
                 Price = request.Price,
             };
-            _Books.Add(book);
+            Books.Add(book);
             
             return Ok(book);
         }
 
         [HttpGet]
         [ProducesResponseType(typeof(List<Book>), StatusCodes.Status200OK)]
-        public IActionResult getBooks()
+        public IActionResult GetBooks()
         {
-            return Ok(_Books);
+            return Ok(Books);
         }
         
         [HttpPut]
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public IActionResult editBook([FromRoute] string id, [FromBody]EditBookRequestJSON request)
+        public IActionResult EditBook([FromRoute] string id, [FromBody]EditBookRequestJSON request)
         {
-            var bookIndex = _Books.FindIndex(book => book.Id == id);
+            var bookIndex = Books.FindIndex(book => book.Id == id);
             if (bookIndex < 0) return NotFound();
             
-            var book = _Books[bookIndex];
+            var book = Books[bookIndex];
             
             if(request.Title is not null) book.Title = request.Title;
             if(request.Author is not null) book.Author = request.Author;
             if(request.Gender is not null) book.Gender = request.Gender;
             if (request.Price.HasValue) book.Price = request.Price.Value;
             
-            _Books[bookIndex] = book;
+            Books[bookIndex] = book;
             return NoContent();
         }
         
         [HttpDelete]
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public IActionResult deleteBook([FromRoute] string id)
+        public IActionResult DeleteBook([FromRoute] string id)
         {
-            _Books.RemoveAt(_Books.FindIndex(book => book.Id == id));
+            Books.RemoveAt(Books.FindIndex(book => book.Id == id));
 
             return NoContent();
         }
